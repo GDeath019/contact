@@ -42,23 +42,18 @@ public class MainActivity extends AppCompatActivity {
                         CallLog.Calls.DURATION
                 };
                 Uri uri = CallLog.Calls.CONTENT_URI;
-                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                CursorLoader cursorLoader = new CursorLoader(MainActivity.this,
+                        uri,
+                        projection,
+                        CallLog.Calls.DURATION + "<?",
+                        new String[]{"30"},
+                        CallLog.Calls.DATE + " asc");
+                if (cursorLoader.loadInBackground()==null){
+                    Toast.makeText(MainActivity.this, "hmmmmmmmm", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                Cursor cursor = cursorLoader.loadInBackground();
                 try {
-                    Cursor cursor = getContentResolver().query(
-                            uri,
-                            projection,
-                            CallLog.Calls.DURATION + "<?", new String[]{"30"},
-                            CallLog.Calls.DATE + "asc"
-                    );
                         cursor.moveToFirst();
                         String s = "";
                         while (cursor.isAfterLast() == false) {
